@@ -7,6 +7,10 @@ import PIL.Image as Image
 import numpy as np
 import pixelmod
 
+import os
+from dotenv import load_dotenv
+
+
 intents = discord.Intents.default()
 intents.message_content = True
 
@@ -32,5 +36,7 @@ async def poop(ctx):
     await ctx.send('pee!')
 
 ##################################
-TOKEN = 'MTE2MDMwMjg5MjcyOTc3NDE5MA.Gh5Kre.P1OwCPqxx1deUh4Iyj9sMBOotEZX1gPNEAfgwU'
+
+load_dotenv()
+TOKEN = os.getenv("DISCORD_TOKEN")
 bot.run(TOKEN)
