@@ -39,7 +39,7 @@ async def shutdown(ctx):
 async def poop(interaction:discord.Interaction):
     await interaction.response.send_message("pee!")
 
-def create_image():
+def testimage():
     # 100x100
     I = np.full((100,100,3), 128).astype(np.uint8)
     I[0:25,0:25,:] = 0
@@ -50,13 +50,36 @@ def create_image():
 
 @bot.command()
 async def createimage(ctx):
-    filepath = create_image()
+    filepath = testimage()
     # await ctx.send(file=discord.File(filepath))
     with open(filepath, 'rb') as f:
         img = discord.File(f)
         await ctx.send(file=img)
     
 
+@bot.tree.command()
+async def random(interaction:discord.Interaction):
+    # channel_id = interaction.channel_id
+    # channel = bot.get_channel(channel_id)
+    channel = interaction.channel
+    # img_bytes = bytes()
+    attachment_savepath = "attachment.jpg"
+    async for msg in channel.history(limit=10):
+        if(len(msg.attachments) != 0):
+            attachment = msg.attachments[0]
+            if(attachment.content_type.startswith("image/")):
+                # img_bytes = await attachment.read()
+                await attachment.save(attachment_savepath)
+
+    # img = Image.open(img_bytes)
+    img = Image.open(attachment_savepath)
+    img = np.copy(np.asarray(img))
+    pixelmod.pixelmod(img, (10,10))
+    img = Image.fromarray(img)
+    img_filepath = "testmodimg.jpg"
+    img.save(img_filepath, quality=95, subsampling=0)
+    await interaction.response.send_message(file=discord.File(img_filepath))
+    
 
 
 
