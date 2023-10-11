@@ -2,10 +2,6 @@ import PIL.Image as Image
 import numpy as np
 import os
 
-# BOT NOTES:
-# https://support-dev.discord.com/hc/en-us/articles/6381892888087-Bots-Buttons
-# https://discord.com/blog/slash-commands-are-here
-
 
 def pixelrandomize(I):
     patch = np.copy(I)
@@ -80,5 +76,4 @@ if __name__ == "__main__":
     img_s.save(scrambled_filepath, quality=95, subsampling=0)
 
     # TODO: gif! (or video frames?)
-    # TODO: discord bot!
     # TODO: vector op / multithreaded way of scrambling each segment? | test single vs multi thread speed

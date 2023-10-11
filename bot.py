@@ -1,9 +1,12 @@
+# BOT NOTES:
+# https://support-dev.discord.com/hc/en-us/articles/6381892888087-Bots-Buttons
+# https://discord.com/blog/slash-commands-are-here
+
 # command syncing notes for slash commands:
 # https://gist.github.com/AbstractUmbra/a9c188797ae194e592efe05fa129c57f
 # https://discordpy.readthedocs.io/en/latest/interactions/api.html#discord.app_commands.CommandTree.copy_global_to
 
 # consider discord.js instead of discord.py some day?
-
 # https://stackoverflow.com/questions/52241051/i-want-to-let-my-discord-bot-send-images-gifs
 
 import discord
