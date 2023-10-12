@@ -6,7 +6,6 @@
 # https://gist.github.com/AbstractUmbra/a9c188797ae194e592efe05fa129c57f
 # https://discordpy.readthedocs.io/en/latest/interactions/api.html#discord.app_commands.CommandTree.copy_global_to
 
-# consider discord.js instead of discord.py some day?
 # https://stackoverflow.com/questions/52241051/i-want-to-let-my-discord-bot-send-images-gifs
 
 import discord
@@ -41,7 +40,6 @@ async def poop(interaction:discord.Interaction):
     await interaction.response.send_message("pee!")
 
 def testimage():
-    # 100x100
     I = np.full((100,100,3), 128).astype(np.uint8)
     I[0:25,0:25,:] = 0
     I[75:100,75:100,:] = 255
@@ -52,31 +50,25 @@ def testimage():
 @bot.command()
 async def createimage(ctx):
     filepath = testimage()
-    # await ctx.send(file=discord.File(filepath))
-    with open(filepath, 'rb') as f:
-        img = discord.File(f)
-        await ctx.send(file=img)
+    await ctx.send(file=discord.File(filepath))
+    # with open(filepath, 'rb') as f:
+    #     img = discord.File(f)
+    #     await ctx.send(file=img)
     
 
-@bot.tree.command()
+@bot.tree.command(description="Randomizes subsets of pixels")
 async def random(interaction:discord.Interaction):
-    # channel_id = interaction.channel_id
-    # channel = bot.get_channel(channel_id)
     channel = interaction.channel
-    img_bytes = bytes()
-    # attachment_savepath = "attachment.jpg"
+    img_bytes = None
     async for msg in channel.history(limit=10):
         if(len(msg.attachments) != 0):
             attachment = msg.attachments[0]
             if(attachment.content_type.startswith("image/")):
                 img_bytes = await attachment.read()
-                # await attachment.save(attachment_savepath)
+                # TODO: break?? how to break with async...
 
-    img_bio = io.BytesIO(img_bytes)
-    img = Image.open(img_bio)
-    # img = Image.open(img_bytes)
-    # img = Image.frombytes(mode="RGB", size=, data=img_bytes, decoder_name=)
-    # img = Image.open(attachment_savepath)
+    img_bytes_io = io.BytesIO(img_bytes)
+    img = Image.open(img_bytes_io)
     img = np.copy(np.asarray(img))
     pixelmod.pixelmod(img, (10,10))
     img = Image.fromarray(img)
