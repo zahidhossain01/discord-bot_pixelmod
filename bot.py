@@ -40,6 +40,7 @@ async def poop(interaction:discord.Interaction):
     await interaction.response.send_message("pee!")
 
 def testimage():
+    # TODO: make fun rainbow gradient bc why not
     I = np.full((100,100,3), 128).astype(np.uint8)
     I[0:25,0:25,:] = 0
     I[75:100,75:100,:] = 255
@@ -51,6 +52,7 @@ def testimage():
 async def createimage(ctx):
     filepath = testimage()
     await ctx.send(file=discord.File(filepath))
+    # TODO: decide on top or bottom method for sending files (which has more memory usage maybe? context manager might auto close or??...)
     # with open(filepath, 'rb') as f:
     #     img = discord.File(f)
     #     await ctx.send(file=img)
@@ -76,7 +78,6 @@ async def random(interaction:discord.Interaction):
     img.save(img_filepath, quality=95, subsampling=0)
     await interaction.response.send_message(file=discord.File(img_filepath))
     
-
 
 
 ##################################
