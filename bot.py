@@ -16,6 +16,7 @@ import PIL.Image as Image
 import numpy as np
 import pixelmod
 
+import io
 import os
 from dotenv import load_dotenv
 
@@ -62,17 +63,20 @@ async def random(interaction:discord.Interaction):
     # channel_id = interaction.channel_id
     # channel = bot.get_channel(channel_id)
     channel = interaction.channel
-    # img_bytes = bytes()
-    attachment_savepath = "attachment.jpg"
+    img_bytes = bytes()
+    # attachment_savepath = "attachment.jpg"
     async for msg in channel.history(limit=10):
         if(len(msg.attachments) != 0):
             attachment = msg.attachments[0]
             if(attachment.content_type.startswith("image/")):
-                # img_bytes = await attachment.read()
-                await attachment.save(attachment_savepath)
+                img_bytes = await attachment.read()
+                # await attachment.save(attachment_savepath)
 
+    img_bio = io.BytesIO(img_bytes)
+    img = Image.open(img_bio)
     # img = Image.open(img_bytes)
-    img = Image.open(attachment_savepath)
+    # img = Image.frombytes(mode="RGB", size=, data=img_bytes, decoder_name=)
+    # img = Image.open(attachment_savepath)
     img = np.copy(np.asarray(img))
     pixelmod.pixelmod(img, (10,10))
     img = Image.fromarray(img)
