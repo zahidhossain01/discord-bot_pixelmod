@@ -1,3 +1,6 @@
+# FAQ: 
+# https://discordpy.readthedocs.io/en/latest/faq.html
+
 # BOT NOTES:
 # https://support-dev.discord.com/hc/en-us/articles/6381892888087-Bots-Buttons
 # https://discord.com/blog/slash-commands-are-here
@@ -8,8 +11,12 @@
 
 # https://stackoverflow.com/questions/52241051/i-want-to-let-my-discord-bot-send-images-gifs
 
+# Button timeout (similar to Interaction response time problem):
+# https://stackoverflow.com/questions/72312099/discord-py-button-responses-interaction-failed-after-a-certain-time
+
 import discord
 from discord.ext import commands
+import asyncio
 
 import PIL.Image as Image
 import numpy as np
@@ -57,18 +64,22 @@ async def createimage(ctx):
     #     img = discord.File(f)
     #     await ctx.send(file=img)
     
-
+# https://stackoverflow.com/questions/73361556/error-discord-errors-notfound-404-not-found-error-code-10062-unknown-inter
 @bot.tree.command(description="Randomizes subsets of pixels")
 async def random(interaction:discord.Interaction):
+    await interaction.response.defer()
+    
     channel = interaction.channel
     img_bytes = None
     async for msg in channel.history(limit=10):
-        if(len(msg.attachments) != 0):
-            attachment = msg.attachments[0]
-            if(attachment.content_type.startswith("image/")):
-                img_bytes = await attachment.read()
-                # TODO: break?? how to break with async...
+        if(len(msg.attachments) == 0):
+            continue
+        if(msg.attachments[0].content_type.startswith("image/") == False):
+            continue
+        img_bytes = await msg.attachments[0].read()
+        break
 
+    await asyncio.sleep(10)
     img_bytes_io = io.BytesIO(img_bytes)
     img = Image.open(img_bytes_io)
     img = np.copy(np.asarray(img))
@@ -76,8 +87,12 @@ async def random(interaction:discord.Interaction):
     img = Image.fromarray(img)
     img_filepath = "testmodimg.jpg"
     img.save(img_filepath, quality=95, subsampling=0)
-    await interaction.response.send_message(file=discord.File(img_filepath))
     
+    # await interaction.response.send_message(file=discord.File(img_filepath))
+    await interaction.followup.send(file=discord.File(img_filepath))
+    # NOTE: so likeeeee I don't like having to set a sleep, maybe normal command is the move instead of slash command with interaction
+
+
 
 
 ##################################
