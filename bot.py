@@ -91,6 +91,7 @@ async def random(interaction:discord.Interaction):
     # await interaction.response.send_message(file=discord.File(img_filepath))
     await interaction.followup.send(file=discord.File(img_filepath))
     # NOTE: so likeeeee I don't like having to set a sleep, maybe normal command is the move instead of slash command with interaction
+    # TODO: delete any temp generated stuff?
 
 
 
