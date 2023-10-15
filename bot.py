@@ -17,18 +17,20 @@
 import discord
 from discord.ext import commands
 import asyncio
-
-import PIL.Image as Image
-import numpy as np
-import pixelmod
+import logging
 
 import io
 import os
 from dotenv import load_dotenv
 
+import PIL.Image as Image
+import numpy as np
+import pixelmod
+
+
 intents = discord.Intents.default()
 intents.message_content = True
-bot = commands.Bot(command_prefix='$', intents=intents)
+bot = commands.Bot(command_prefix='.', intents=intents)
 
 
 @bot.event
@@ -65,11 +67,38 @@ async def createimage(ctx):
     #     await ctx.send(file=img)
     
 # https://stackoverflow.com/questions/73361556/error-discord-errors-notfound-404-not-found-error-code-10062-unknown-inter
-@bot.tree.command(description="Randomizes subsets of pixels")
-async def random(interaction:discord.Interaction):
-    await interaction.response.defer()
+# @bot.tree.command(description="Randomizes subsets of pixels")
+# async def randomslash(interaction:discord.Interaction):
+#     await interaction.response.defer()
     
-    channel = interaction.channel
+#     channel = interaction.channel
+#     img_bytes = None
+#     async for msg in channel.history(limit=10):
+#         if(len(msg.attachments) == 0):
+#             continue
+#         if(msg.attachments[0].content_type.startswith("image/") == False):
+#             continue
+#         img_bytes = await msg.attachments[0].read()
+#         break
+
+#     await asyncio.sleep(10)
+#     img_bytes_io = io.BytesIO(img_bytes)
+#     img = Image.open(img_bytes_io)
+#     img = np.copy(np.asarray(img))
+#     pixelmod.pixelmod(img, (10,10))
+#     img = Image.fromarray(img)
+#     img_filepath = "testmodimg.jpg"
+#     img.save(img_filepath, quality=95, subsampling=0)
+    
+#     # await interaction.response.send_message(file=discord.File(img_filepath))
+#     await interaction.followup.send(content="slash command", file=discord.File(img_filepath))
+#     # NOTE: so likeeeee I don't like having to set a sleep, maybe normal command is the move instead of slash command with interaction
+
+@bot.command()
+async def random(ctx:commands.Context):
+    # TODO: how to have a "bot is typing" status?
+    # TODO: in the image reply, also have image stats like NotSoBot shows
+    channel = ctx.channel
     img_bytes = None
     async for msg in channel.history(limit=10):
         if(len(msg.attachments) == 0):
@@ -78,20 +107,18 @@ async def random(interaction:discord.Interaction):
             continue
         img_bytes = await msg.attachments[0].read()
         break
-
-    await asyncio.sleep(10)
-    img_bytes_io = io.BytesIO(img_bytes)
-    img = Image.open(img_bytes_io)
-    img = np.copy(np.asarray(img))
-    pixelmod.pixelmod(img, (10,10))
-    img = Image.fromarray(img)
-    img_filepath = "testmodimg.jpg"
-    img.save(img_filepath, quality=95, subsampling=0)
     
-    # await interaction.response.send_message(file=discord.File(img_filepath))
-    await interaction.followup.send(file=discord.File(img_filepath))
-    # NOTE: so likeeeee I don't like having to set a sleep, maybe normal command is the move instead of slash command with interaction
-    # TODO: delete any temp generated stuff?
+    async with channel.typing():
+        img_bytes_io = io.BytesIO(img_bytes)
+        img = Image.open(img_bytes_io)
+        img = np.copy(np.asarray(img))
+        pixelmod.pixelmod(img, (10,10))
+        img = Image.fromarray(img)
+        img_filepath = "testmodimg.jpg"
+        img.save(img_filepath, quality=95, subsampling=0)
+    
+    await ctx.message.reply(content="dot command", file=discord.File(img_filepath))
+    os.remove(img_filepath)
 
 
 
