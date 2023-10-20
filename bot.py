@@ -96,7 +96,6 @@ async def createimage(ctx):
 
 @bot.command()
 async def random(ctx:commands.Context):
-    # TODO: how to have a "bot is typing" status?
     # TODO: in the image reply, also have image stats like NotSoBot shows
     channel = ctx.channel
     img_bytes = None
@@ -117,7 +116,12 @@ async def random(ctx:commands.Context):
         img_filepath = "testmodimg.jpg"
         img.save(img_filepath, quality=95, subsampling=0)
     
-    await ctx.message.reply(content="dot command", file=discord.File(img_filepath))
+    img_file = discord.File(img_filepath)
+    embed = discord.Embed(title="Title", description="Description", color=0x00ff00)
+    embed.set_image(url="attachment://"+img_filepath)
+
+    await ctx.message.reply(content="dot command", file=img_file, embed=embed)
+    # await ctx.message.reply(content="dot command", file=img_file)
     os.remove(img_filepath)
 
 

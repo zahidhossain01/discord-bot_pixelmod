@@ -75,5 +75,4 @@ if __name__ == "__main__":
     img_s = Image.fromarray(I_mod)
     img_s.save(scrambled_filepath, quality=95, subsampling=0)
 
-    # TODO: gif! (or video frames?)
     # TODO: vector op / multithreaded way of scrambling each segment? | test single vs multi thread speed
