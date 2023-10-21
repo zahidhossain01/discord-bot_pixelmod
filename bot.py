@@ -17,11 +17,11 @@
 import discord
 from discord.ext import commands
 import asyncio
-import logging
+from dotenv import load_dotenv
 
 import io
 import os
-from dotenv import load_dotenv
+import datetime
 
 import PIL.Image as Image
 import numpy as np
@@ -107,21 +107,23 @@ async def random(ctx:commands.Context):
         img_bytes = await msg.attachments[0].read()
         break
     
+    footer_text = ""
+
     async with channel.typing():
         img_bytes_io = io.BytesIO(img_bytes)
-        img = Image.open(img_bytes_io)
-        img = np.copy(np.asarray(img))
-        pixelmod.pixelmod(img, (10,10))
-        img = Image.fromarray(img)
-        img_filepath = "testmodimg.jpg"
-        img.save(img_filepath, quality=95, subsampling=0)
+        try:
+            img = Image.open(img_bytes_io)
+            img = np.copy(np.asarray(img))
+            pixelmod.pixelmod(img, (10,10))
+            img = Image.fromarray(img)
+            img_filepath = "testmodimg.jpg"
+            img.save(img_filepath, quality=95, subsampling=0)
+            footer_text = f"{img.size[0]} x {img.size[1]}"
+        except Exception as e:
+            await ctx.message.reply(content=str(e))
+            return
     
-    img_file = discord.File(img_filepath)
-    embed = discord.Embed(title="Title", description="Description", color=0x00ff00)
-    embed.set_image(url="attachment://"+img_filepath)
-
-    await ctx.message.reply(content="dot command", file=img_file, embed=embed)
-    # await ctx.message.reply(content="dot command", file=img_file)
+    await ctx.message.reply(file=discord.File(img_filepath))
     os.remove(img_filepath)
 
 
