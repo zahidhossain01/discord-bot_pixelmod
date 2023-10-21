@@ -117,7 +117,6 @@ async def random(ctx:commands.Context):
         img = Image.fromarray(img)
         img_filepath = "testmodimg.jpg"
         img.save(img_filepath, quality=95, subsampling=0)
-        footer_text = f"{img.size[0]} x {img.size[1]}"
     
     await ctx.message.reply(file=discord.File(img_filepath))
     os.remove(img_filepath)
