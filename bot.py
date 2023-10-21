@@ -111,17 +111,13 @@ async def random(ctx:commands.Context):
 
     async with channel.typing():
         img_bytes_io = io.BytesIO(img_bytes)
-        try:
-            img = Image.open(img_bytes_io)
-            img = np.copy(np.asarray(img))
-            pixelmod.pixelmod(img, (10,10))
-            img = Image.fromarray(img)
-            img_filepath = "testmodimg.jpg"
-            img.save(img_filepath, quality=95, subsampling=0)
-            footer_text = f"{img.size[0]} x {img.size[1]}"
-        except Exception as e:
-            await ctx.message.reply(content=str(e))
-            return
+        img = Image.open(img_bytes_io)
+        img = np.copy(np.asarray(img))
+        pixelmod.pixelmod(img, (10,10))
+        img = Image.fromarray(img)
+        img_filepath = "testmodimg.jpg"
+        img.save(img_filepath, quality=95, subsampling=0)
+        footer_text = f"{img.size[0]} x {img.size[1]}"
     
     await ctx.message.reply(file=discord.File(img_filepath))
     os.remove(img_filepath)
